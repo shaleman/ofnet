@@ -314,10 +314,6 @@ func (self *Vrouter) AddVtepPort(portNo uint32, remoteIp net.IP) error {
 
 		//set vrf id as METADATA
 		vrfmetadata, vrfmetadataMask := Vrfmetadata(*vrfid)
-
-		metadata := METADATA_RX_VTEP | vrfmetadata
-		metadataMask := METADATA_RX_VTEP | vrfmetadataMask
-
 		portVlanFlow.SetMetadata(metadata, metadataMask)
 
 		// Point it to next table.
