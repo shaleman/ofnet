@@ -178,12 +178,12 @@ func NewOfnetAgent(bridgeName string, dpName string, localIp net.IP, rpcPort uin
 }
 
 func (self *OfnetAgent) lockDB() {
-	log.Infof("Locking endpoint db")
+	log.Infof("Locking endpoint db %s", self.dpName)
 	self.mutex.Lock()
 }
 
 func (self *OfnetAgent) unlockDB() {
-	log.Infof("Unlocking endpoint db")
+	log.Infof("Unlocking endpoint db %s", self.dpName)
 	self.mutex.Unlock()
 }
 
@@ -421,7 +421,7 @@ func (self *OfnetAgent) AddLocalEndpoint(endpoint EndpointInfo) error {
 		err := rpcHub.Client(master.HostAddr, master.HostPort).Call("OfnetMaster.EndpointAdd", epreg, &resp)
 		if err != nil {
 			log.Errorf("Failed to add endpoint %+v to master %+v. Err: %v", epreg, master, err)
-			return err
+			// Continue sending the message to other masters.
 		}
 	}
 
@@ -556,6 +556,9 @@ func (self *OfnetAgent) AddNetwork(vlanId uint16, vni uint32, Gw string, Vrf str
 
 // Remove a vlan from datapath
 func (self *OfnetAgent) RemoveNetwork(vlanId uint16, vni uint32, Gw string, Vrf string) error {
+	// Dont handle endpointDB operations during this time
+	self.lockDB()
+	defer self.unlockDB()
 
 	vrf := self.vlanVrf[vlanId]
 	gwEpid := self.getEndpointIdByIpVrf(net.ParseIP(Gw), *vrf)
