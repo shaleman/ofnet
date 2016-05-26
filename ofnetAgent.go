@@ -36,6 +36,7 @@ import (
 	"github.com/contiv/ofnet/ovsdbDriver"
 	"github.com/contiv/ofnet/rpcHub"
 	"github.com/jainvipin/bitset"
+	"github.com/shaleman/libOpenflow/openflow13"
 )
 
 // OfnetAgent state
@@ -770,6 +771,19 @@ func (self *OfnetAgent) DeleteLocalProtoRoute(path *OfnetProtoRouteInfo) {
 	if self.protopath != nil {
 		self.protopath.DeleteLocalProtoRoute(path)
 	}
+}
+
+// MultipartReply Receives a multi-part reply from the switch.
+func (self *OfnetAgent) MultipartReply(sw *ofctrl.OFSwitch, reply *openflow13.MultipartReply) {
+	log.Debugf("Multi-part reply received from switch: %+v", reply)
+
+	// Inform the datapath
+	self.datapath.MultipartReply(sw, reply)
+}
+
+// GetEndpointStats fetches all endpoint stats
+func (self *OfnetAgent) GetEndpointStats() ([]*OfnetEndpointStats, error) {
+	return self.datapath.GetEndpointStats()
 }
 
 func (self *OfnetAgent) createVrf(Vrf string) (uint16, bool) {
