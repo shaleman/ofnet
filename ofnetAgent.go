@@ -24,6 +24,7 @@ package ofnet
 // to connect to controller on specified port
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net"
@@ -784,6 +785,57 @@ func (self *OfnetAgent) MultipartReply(sw *ofctrl.OFSwitch, reply *openflow13.Mu
 // GetEndpointStats fetches all endpoint stats
 func (self *OfnetAgent) GetEndpointStats() ([]*OfnetEndpointStats, error) {
 	return self.datapath.GetEndpointStats()
+}
+
+func (self *OfnetAgent) GetStateJSON() (string, error) {
+	// convert ofnet struct to an exported struct for json marshaling
+	ofnetExport := struct {
+		LocalIp         net.IP                    // Local IP to be used for tunnel end points
+		MyPort          uint16                    // Port where the agent's RPC server is listening
+		MyAddr          string                    // RPC server addr. same as localIp. different in testing environments
+		IsConnected     bool                      // Is the switch connected
+		DpName          string                    // Datapath type
+		Protopath       OfnetProto                // Configured protopath
+		MasterDb        map[string]*OfnetNode     // list of Masters
+		PortVlanMap     map[uint32]*uint16        // Map port number to vlan
+		VniVlanMap      map[uint32]*uint16        // Map VNI to vlan
+		VlanVniMap      map[uint16]*uint32        // Map vlan to VNI
+		VtepTable       map[string]*uint32        // Map vtep IP to OVS port number
+		EndpointDb      map[string]*OfnetEndpoint // all known endpoints
+		LocalEndpointDb map[uint32]*OfnetEndpoint // local port to endpoint map
+		VrfNameIdMap    map[string]*uint16        // Map vrf name to vrf Id
+		VrfIdNameMap    map[uint16]*string        // Map vrf id to vrf Name
+		VrfDb           map[string]*OfnetVrfInfo  // Db of all the global vrfs
+		VlanVrf         map[uint16]*string        //vlan to vrf mapping
+		FwdMode         string                    ///forwarding mode routing or bridge
+	}{
+		self.localIp,
+		self.MyPort,
+		self.MyAddr,
+		self.isConnected,
+		self.dpName,
+		self.protopath,
+		self.masterDb,
+		self.portVlanMap,
+		self.vniVlanMap,
+		self.vlanVniMap,
+		self.vtepTable,
+		self.endpointDb,
+		self.localEndpointDb,
+		self.vrfNameIdMap,
+		self.vrfIdNameMap,
+		self.vrfDb,
+		self.vlanVrf,
+		self.fwdMode,
+	}
+
+	jsonStats, err := json.Marshal(ofnetExport)
+	if err != nil {
+		log.Errorf("Error encoding ofnet agent state. Err: %v", err)
+		return "", err
+	}
+
+	return string(jsonStats), nil
 }
 
 func (self *OfnetAgent) createVrf(Vrf string) (uint16, bool) {
