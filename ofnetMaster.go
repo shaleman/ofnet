@@ -310,8 +310,8 @@ func (self *OfnetMaster) InjectGARPs(epgID int) {
 	}
 }
 
-// GetStateJSON returns current state as json
-func (self *OfnetMaster) GetStateJSON() (string, error) {
+// InspectState returns current state as json
+func (self *OfnetMaster) InspectState() (string, error) {
 	// convert ofnet struct to an exported struct for json marshaling
 	ofnetExport := struct {
 		MyAddr     string                      // Address where we are listening
