@@ -24,7 +24,6 @@ package ofnet
 // to connect to controller on specified port
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net"
@@ -787,8 +786,8 @@ func (self *OfnetAgent) GetEndpointStats() ([]*OfnetEndpointStats, error) {
 	return self.datapath.GetEndpointStats()
 }
 
-// InspectState returns ofnet agent state in json form
-func (self *OfnetAgent) InspectState() (string, error) {
+// InspectState returns ofnet agent state
+func (self *OfnetAgent) InspectState() (interface{}, error) {
 	// convert ofnet struct to an exported struct for json marshaling
 	ofnetExport := struct {
 		LocalIp     net.IP                // Local IP to be used for tunnel end points
@@ -830,13 +829,7 @@ func (self *OfnetAgent) InspectState() (string, error) {
 		self.fwdMode,
 	}
 
-	jsonStats, err := json.Marshal(ofnetExport)
-	if err != nil {
-		log.Errorf("Error encoding ofnet agent state. Err: %v", err)
-		return "", err
-	}
-
-	return string(jsonStats), nil
+	return &ofnetExport, nil
 }
 
 func (self *OfnetAgent) createVrf(Vrf string) (uint16, bool) {
