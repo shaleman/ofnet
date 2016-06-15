@@ -640,7 +640,7 @@ func (proxy *ServiceProxy) HandlePkt(pkt *ofctrl.PacketIn) {
 	// use copies of fields from the pkt
 	ipSrc := net.ParseIP(ip.NWSrc.String())
 	ipDst := net.ParseIP(ip.NWDst.String())
-	fInfo := flowHdl{}
+	fInfo := flowHdl{SvcIP: svcIP}
 
 	// setup nat rules in both directions for all ports of the service
 	for _, p := range operEntry.Ports {
@@ -722,7 +722,7 @@ func (proxy *ServiceProxy) updateSNATStats(fs *openflow13.FlowStats) {
 	stats.Stats.BytesIn = fs.ByteCount
 	entry.SvcStats[svcIP] = stats
 
-	log.Infof("SNAT Stats: epIP: %s, svcIp: %s, entry: %+v", epIP, svcIP, entry)
+	log.Debugf("SNAT Stats: epIP: %s, svcIp: %s, entry: %+v", epIP, svcIP, entry)
 
 }
 
@@ -765,7 +765,7 @@ func (proxy *ServiceProxy) updateDNATStats(fs *openflow13.FlowStats) {
 	stats.Stats.BytesOut = fs.ByteCount
 	entry.SvcStats[svcIP] = stats
 
-	log.Infof("DNAT Stats: epIP: %s, svcIp: %s, entry: %+v", epIP, svcIP, entry)
+	log.Debugf("DNAT Stats: epIP: %s, svcIp: %s, entry: %+v", epIP, svcIP, entry)
 }
 
 // FlowStats handles a stats response from the switch
@@ -779,7 +779,7 @@ func (proxy *ServiceProxy) FlowStats(reply *openflow13.MultipartReply) {
 	for _, entry := range flowArr {
 		flowStats := entry.(*openflow13.FlowStats)
 
-		log.Infof("Got flow stats: %+v", flowStats)
+		log.Debugf("Got flow stats: %+v", flowStats)
 
 		if flowStats.TableId == SRV_PROXY_DNAT_TBL_ID {
 			proxy.updateDNATStats(flowStats)
@@ -810,7 +810,7 @@ func (proxy *ServiceProxy) pollStats() {
 		mp1 := getMPReq()
 		mp1.Body = dnatReq
 		proxy.ofSwitch.Send(mp1)
-		log.Infof("Sent DNAT stats req")
+		log.Debugf("Sent DNAT stats req")
 		time.Sleep(1 * time.Second)
 		//inject a stats request
 		snatReq := openflow13.NewFlowStatsRequest()
@@ -818,7 +818,7 @@ func (proxy *ServiceProxy) pollStats() {
 		mp2 := getMPReq()
 		mp2.Body = snatReq
 		proxy.ofSwitch.Send(mp2)
-		log.Infof("Sent SNAT stats req")
+		log.Debugf("Sent SNAT stats req")
 	}
 }
 
@@ -871,12 +871,12 @@ func (proxy *ServiceProxy) InspectState() interface{} {
 		Catalogue svcCatalogue                   // Services and providers added to the proxy
 		OperState map[string]*proxyOper          // Operational state info, with service IP as key
 		EpStats   map[string]*OfnetEndpointStats // stats for the service
-		FlowMap   map[uint64]flowHdl             // flowId to Info map
+		// FlowMap   map[uint64]flowHdl             // flowId to Info map
 	}{
 		proxy.catalogue,
 		proxy.operState,
 		proxy.epStats,
-		proxy.flowMap,
+		// proxy.flowMap,
 	}
 
 	return &proxyExport

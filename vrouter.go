@@ -809,14 +809,14 @@ func (vr *Vrouter) GetEndpointStats() ([]*OfnetEndpointStats, error) {
 
 func (vr *Vrouter) InspectState() (interface{}, error) {
 	vrouterExport := struct {
-		PolicyAgent *PolicyAgent     // Policy agent
-		SvcProxy    interface{}      // Service proxy
-		VlanDb      map[uint16]*Vlan // Database of known vlans
+		PolicyAgent *PolicyAgent // Policy agent
+		SvcProxy    interface{}  // Service proxy
+		// VlanDb      map[uint16]*Vlan // Database of known vlans
 		MyRouterMac net.HardwareAddr // Router Mac to be used
 	}{
 		vr.policyAgent,
 		vr.svcProxy.InspectState(),
-		vr.vlanDb,
+		// vr.vlanDb,
 		vr.myRouterMac,
 	}
 	return vrouterExport, nil
