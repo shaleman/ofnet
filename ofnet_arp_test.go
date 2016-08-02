@@ -73,6 +73,7 @@ func vlanAddEP(epID, epgID int, add bool) error {
 
 // TestOfnetVlanGARPInject verifies GARP injection
 func TestOfnetVlanGArpInject(t *testing.T) {
+	var resp bool
 
 	err1 := vlanAgents[0].AddNetwork(uint16(5), uint32(5), "", "test1")
 	err2 := vlanAgents[0].AddNetwork(uint16(6), uint32(6), "", "test1")
@@ -89,7 +90,6 @@ func TestOfnetVlanGArpInject(t *testing.T) {
 		return
 	}
 
-	var resp bool
 	time.Sleep(5 * time.Second)
 
 	// Look for stats update
@@ -101,6 +101,7 @@ func TestOfnetVlanGArpInject(t *testing.T) {
 
 	// Add two endpoints to another epg
 	vlanAddEP(6, 6, true)
+	log.Infof("Testing GARP injection.. this might take a while")
 	time.Sleep(GARP_EXPIRY_DELAY * time.Second)
 	vlanAddEP(7, 6, true)
 	time.Sleep(GARP_EXPIRY_DELAY * time.Second)
@@ -173,6 +174,7 @@ func addUplink(ofa *OfnetAgent, linkName string, ofpPortNo uint32) (*netlink.Vet
 	}
 	// delete old link if it exists.. and ignore error
 	netlink.LinkDel(link)
+	time.Sleep(100 * time.Millisecond)
 
 	if err := netlink.LinkAdd(link); err != nil {
 		return nil, err
@@ -254,6 +256,7 @@ func checkArpReqHandling(ofa *OfnetAgent, inPort, vlan int, macSrc, macDst, ipSr
 	log.Debugf("AfterStats: %+v", ofa.stats)
 	newCount := ofa.getStats(expStat)
 	if newCount != (prevCount + 1) {
+		log.Infof("checkArpReqHandling: AfterStats: %+v", ofa.stats)
 		t.Fatalf("%s value %d did not match expected value %d", expStat, newCount, (prevCount + 1))
 	}
 }
@@ -273,6 +276,11 @@ func TestVlanProxyArp(t *testing.T) {
 		return
 	}
 	err = addEndpoint(vlanAgents[0], 2, 1, "02:02:0A:01:01:02", "10.1.1.2")
+	if err != nil {
+		t.Errorf("Error adding endpoint")
+		return
+	}
+	err = addEndpoint(vlanAgents[1], 3, 1, "02:02:0A:01:01:03", "10.1.1.3")
 	if err != nil {
 		t.Errorf("Error adding endpoint")
 		return
@@ -301,6 +309,9 @@ func TestVlanProxyArp(t *testing.T) {
 
 	// inject ARP req from uplink to unknown dest with known src
 	checkArpReqHandling(vlanAgents[0], 99, 1, "02:02:0A:01:01:01", "", "10.1.1.1", "10.1.1.200", "ArpReqUnknownDestFromUplink", t)
+
+	// inject ARP req from uplink to non-local dest
+	checkArpReqHandling(vlanAgents[0], 99, 1, "02:02:0A:01:01:01", "", "10.1.1.1", "10.1.1.3", "ArpReqNonLocalDestFromUplink", t)
 
 	// cleanup uplink
 	err = delUplink(vlanAgents[0], 99, link)
@@ -338,6 +349,11 @@ func TestVxlanProxyArp(t *testing.T) {
 		t.Errorf("Error adding endpoint")
 		return
 	}
+	err = addEndpoint(vxlanAgents[1], 3, 1, "02:02:0A:01:01:03", "10.1.1.3")
+	if err != nil {
+		t.Errorf("Error adding endpoint")
+		return
+	}
 
 	// add a vtep
 	err = vxlanAgents[0].AddVtepPort(88, net.ParseIP("192.168.2.11"))
@@ -362,6 +378,9 @@ func TestVxlanProxyArp(t *testing.T) {
 
 	// inject ARP req from uplink to unknown dest with known src
 	checkArpReqHandling(vxlanAgents[0], 88, 1, "02:02:0A:01:01:01", "", "10.1.1.1", "10.1.1.200", "ArpReqUnknownDestFromVtep", t)
+
+	// inject ARP req from uplink to non-local dest
+	checkArpReqHandling(vxlanAgents[0], 88, 1, "02:02:0A:01:01:01", "", "10.1.1.1", "10.1.1.3", "ArpReqNonLocalDestFromVtep", t)
 
 	// cleanup vtep
 	err = vxlanAgents[0].RemoveVtepPort(88, net.ParseIP("192.168.2.11"))

@@ -920,7 +920,7 @@ func (self *Vrouter) processArp(pkt protocol.Ethernet, inPort uint32) {
 				if proxyMac == "" {
 					// If we dont know the IP address, dont send an ARP response
 					log.Debugf("Received ARP request for unknown IP: %v", arpHdr.IPDst)
-				        self.agent.incrStats("ArpReqUnknownDest")
+					self.agent.incrStats("ArpReqUnknownDest")
 					return
 				}
 

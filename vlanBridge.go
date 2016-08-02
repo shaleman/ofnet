@@ -629,12 +629,12 @@ func (vl *VlanBridge) processArp(pkt protocol.Ethernet, inPort uint32) {
 			// if it came from uplink and the destination is not local, drop it
 			if fromUplink {
 				if dstEp == nil {
-                                        vl.agent.incrStats("ArpReqUnknownDestFromUplink")
+					vl.agent.incrStats("ArpReqUnknownDestFromUplink")
 					return
 				}
 
 				if dstEp.OriginatorIp.String() != vl.agent.localIp.String() {
-                                        vl.agent.incrStats("ArpReqNonLocalDestFromUplink")
+					vl.agent.incrStats("ArpReqNonLocalDestFromUplink")
 					return
 				}
 			}
