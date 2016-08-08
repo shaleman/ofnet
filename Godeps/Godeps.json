@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/contiv/ofnet",
-	"GoVersion": "go1.5",
+	"GoVersion": "go1.6",
 	"GodepVersion": "v74",
 	"Packages": [
 		"./..."
@@ -30,6 +30,10 @@
 			"Rev": "44d0d95e4f529a0fe230c90d2126bd597c61148c"
 		},
 		{
+			"ImportPath": "github.com/cenkalti/rpc2/jsonrpc",
+			"Rev": "44d0d95e4f529a0fe230c90d2126bd597c61148c"
+		},
+		{
 			"ImportPath": "github.com/contiv/libovsdb",
 			"Comment": "v0.1-7-gbbc744d",
 			"Rev": "bbc744d8ddc88c6a997e600b19736055c24d87d5"
@@ -40,6 +44,16 @@
 		},
 		{
 			"ImportPath": "github.com/google/gopacket",
+			"Comment": "v1.1.10-132-g7abd91e",
+			"Rev": "7abd91e1d374797e8c5b9a85a44bea266a62d7c5"
+		},
+		{
+			"ImportPath": "github.com/google/gopacket/layers",
+			"Comment": "v1.1.10-132-g7abd91e",
+			"Rev": "7abd91e1d374797e8c5b9a85a44bea266a62d7c5"
+		},
+		{
+			"ImportPath": "github.com/google/gopacket/pcap",
 			"Comment": "v1.1.10-132-g7abd91e",
 			"Rev": "7abd91e1d374797e8c5b9a85a44bea266a62d7c5"
 		},
@@ -99,11 +113,23 @@
 			"Rev": "77483a0e697ebcc2584461e9624b611767e7d203"
 		},
 		{
+			"ImportPath": "github.com/vishvananda/netlink/nl",
+			"Rev": "77483a0e697ebcc2584461e9624b611767e7d203"
+		},
+		{
+			"ImportPath": "github.com/vishvananda/netns",
+			"Rev": "8ba1072b58e0c2a240eb5f6120165c7776c3e7b8"
+		},
+		{
 			"ImportPath": "golang.org/x/net/context",
 			"Rev": "195180cfebf7362bd243a52477697895128c8777"
 		},
 		{
 			"ImportPath": "golang.org/x/net/http2",
+			"Rev": "195180cfebf7362bd243a52477697895128c8777"
+		},
+		{
+			"ImportPath": "golang.org/x/net/http2/hpack",
 			"Rev": "195180cfebf7362bd243a52477697895128c8777"
 		},
 		{
@@ -123,16 +149,28 @@
 			"Rev": "a202995ce9a99c7d65875ba9f0cf04ff43169dd5"
 		},
 		{
+			"ImportPath": "google.golang.org/grpc/codes",
+			"Rev": "a202995ce9a99c7d65875ba9f0cf04ff43169dd5"
+		},
+		{
+			"ImportPath": "google.golang.org/grpc/credentials",
+			"Rev": "a202995ce9a99c7d65875ba9f0cf04ff43169dd5"
+		},
+		{
+			"ImportPath": "google.golang.org/grpc/grpclog",
+			"Rev": "a202995ce9a99c7d65875ba9f0cf04ff43169dd5"
+		},
+		{
+			"ImportPath": "google.golang.org/grpc/metadata",
+			"Rev": "a202995ce9a99c7d65875ba9f0cf04ff43169dd5"
+		},
+		{
+			"ImportPath": "google.golang.org/grpc/transport",
+			"Rev": "a202995ce9a99c7d65875ba9f0cf04ff43169dd5"
+		},
+		{
 			"ImportPath": "gopkg.in/tomb.v2",
 			"Rev": "14b3d72120e8d10ea6e6b7f87f7175734b1faab8"
-		},
-		{
-			"ImportPath": "github.com/vishvananda/netlink/nl",
-			"Rev": "77483a0e697ebcc2584461e9624b611767e7d203"
-		},
-		{
-			"ImportPath": "github.com/vishvananda/netns",
-			"Rev": "8ba1072b58e0c2a240eb5f6120165c7776c3e7b8"
 		}
 	]
 }
