@@ -475,7 +475,7 @@ func (vl *VlanBridge) SvcProviderUpdate(svcName string, providers []string) {
 }
 
 // GetEndpointStats fetches ep stats
-func (vl *VlanBridge) GetEndpointStats() ([]*OfnetEndpointStats, error) {
+func (vl *VlanBridge) GetEndpointStats() (map[string]*OfnetEndpointStats, error) {
 	return nil, nil
 }
 
