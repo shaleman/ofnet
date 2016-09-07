@@ -44,21 +44,30 @@ func testOfnetPortDscpFlow(t *testing.T, agent *OfnetAgent, brName string) {
 	}
 
 	// verify port flow
-	portVlanFlowMatch := fmt.Sprintf("priority=10,in_port=14 actions=push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	portVlanFlowMatch := fmt.Sprintf("priority=10,in_port=14 actions=write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		portVlanFlowMatch = fmt.Sprintf("priority=10,in_port=14 actions=push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if !ofctlFlowMatch(flowList, VLAN_TBL_ID, portVlanFlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Could not find the flow %s on ovs %s", portVlanFlowMatch, brName)
 	}
 
 	// verify dscp v4 flow
-	dscpv4FlowMatch := fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:10->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	dscpv4FlowMatch := fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:10->ip_dscp,write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:10->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if !ofctlFlowMatch(flowList, VLAN_TBL_ID, dscpv4FlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Could not find the flow %s on ovs %s", dscpv4FlowMatch, brName)
 	}
 
 	// verify dscp v6 flow
-	dscpv6FlowMatch := fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:10->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	dscpv6FlowMatch := fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:10->ip_dscp,write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:10->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if !ofctlFlowMatch(flowList, VLAN_TBL_ID, dscpv6FlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Could not find the flow %s on ovs %s", dscpv6FlowMatch, brName)
@@ -84,14 +93,20 @@ func testOfnetPortDscpFlow(t *testing.T, agent *OfnetAgent, brName string) {
 	}
 
 	// verify dscp v4 flow
-	dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:20->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:20->ip_dscp,write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:20->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if !ofctlFlowMatch(flowList, VLAN_TBL_ID, dscpv4FlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Could not find the flow %s on ovs %s", dscpv4FlowMatch, brName)
 	}
 
 	// verify dscp v6 flow
-	dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:20->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:20->ip_dscp,write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:20->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if !ofctlFlowMatch(flowList, VLAN_TBL_ID, dscpv6FlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Could not find the flow %s on ovs %s", dscpv6FlowMatch, brName)
@@ -117,21 +132,30 @@ func testOfnetPortDscpFlow(t *testing.T, agent *OfnetAgent, brName string) {
 	}
 
 	// verify port flow still exists
-	portVlanFlowMatch = fmt.Sprintf("priority=10,in_port=14 actions=push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	portVlanFlowMatch = fmt.Sprintf("priority=10,in_port=14 actions=write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		portVlanFlowMatch = fmt.Sprintf("priority=10,in_port=14 actions=push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if !ofctlFlowMatch(flowList, VLAN_TBL_ID, portVlanFlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Could not find the flow %s on ovs %s", portVlanFlowMatch, brName)
 	}
 
 	// verify dscp v4 flow is removed
-	dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:20->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:20->ip_dscp,write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:20->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if ofctlFlowMatch(flowList, VLAN_TBL_ID, dscpv4FlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Flow %s is still present on ovs %s", dscpv4FlowMatch, brName)
 	}
 
 	// verify dscp v6 flow is removed
-	dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:20->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:20->ip_dscp,write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:20->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if ofctlFlowMatch(flowList, VLAN_TBL_ID, dscpv6FlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Flow %s is still present on ovs %s", dscpv6FlowMatch, brName)
@@ -157,14 +181,20 @@ func testOfnetPortDscpFlow(t *testing.T, agent *OfnetAgent, brName string) {
 	}
 
 	// verify dscp v4 flow
-	dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:30->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:30->ip_dscp,write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:30->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if !ofctlFlowMatch(flowList, VLAN_TBL_ID, dscpv4FlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Could not find the flow %s on ovs %s", dscpv4FlowMatch, brName)
 	}
 
 	// verify dscp v6 flow
-	dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:30->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:30->ip_dscp,write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:30->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if !ofctlFlowMatch(flowList, VLAN_TBL_ID, dscpv6FlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Could not find the flow %s on ovs %s", dscpv6FlowMatch, brName)
@@ -184,21 +214,30 @@ func testOfnetPortDscpFlow(t *testing.T, agent *OfnetAgent, brName string) {
 	}
 
 	// verify port flow is removed
-	portVlanFlowMatch = fmt.Sprintf("priority=10,in_port=14 actions=push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	portVlanFlowMatch = fmt.Sprintf("priority=10,in_port=14 actions=write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		portVlanFlowMatch = fmt.Sprintf("priority=10,in_port=14 actions=push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if ofctlFlowMatch(flowList, VLAN_TBL_ID, portVlanFlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Flow %s is still present on ovs %s", portVlanFlowMatch, brName)
 	}
 
 	// verify dscp v4 flow is removed
-	dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:30->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:30->ip_dscp,write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		dscpv4FlowMatch = fmt.Sprintf("priority=100,ip,in_port=14 actions=set_field:30->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if ofctlFlowMatch(flowList, VLAN_TBL_ID, dscpv4FlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Flow %s is still present on ovs %s", dscpv4FlowMatch, brName)
 	}
 
 	// verify dscp v6 flow is removed
-	dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:30->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:30->ip_dscp,write_metadata:0x100000000/0xff00000000")
+	if agent.dpName == "vxlan" {
+		dscpv6FlowMatch = fmt.Sprintf("priority=100,ipv6,in_port=14 actions=set_field:30->ip_dscp,push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100000000/0xff00000000")
+	}
 	if ofctlFlowMatch(flowList, VLAN_TBL_ID, dscpv6FlowMatch) {
 		fmt.Printf("Flows:\n%v", strings.Join(flowList, "\n"))
 		t.Fatalf("Flow %s is still present on ovs %s", dscpv6FlowMatch, brName)

@@ -139,7 +139,7 @@ func TestPolicyAddDelete(t *testing.T) {
 		return
 	}
 	// verify src group flow
-	srcGrpFlowMatch := fmt.Sprintf("priority=10,in_port=12 actions=push_vlan:0x8100,set_field:4097->vlan_vid,write_metadata:0x100640000/0xff7fff0000")
+	srcGrpFlowMatch := fmt.Sprintf("priority=10,in_port=12 actions=write_metadata:0x100640000/0xff7fff0000")
 	if !ofctlFlowMatch(flowList, VLAN_TBL_ID, srcGrpFlowMatch) {
 		fmt.Printf("Flows:\n%+v", flowList)
 		t.Fatalf("Could not find the flow %s on ovs %s", srcGrpFlowMatch, brName)
